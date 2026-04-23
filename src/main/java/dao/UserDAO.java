@@ -7,6 +7,7 @@ import connection.ConnectionFactory;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import model.UserModel;
+import util.SenhaUtil;
 
 /**
  *
@@ -23,15 +24,22 @@ public class UserDAO {
                     con.prepareStatement(sql);
             
             stmt.setString(1, userModel.getUsername());
-            stmt.setString(2, userModel.getPassword());
            
             ResultSet rs = stmt.executeQuery();
             
-            return rs.next();
+            if (rs.next()){
+                String hashBanco = rs.getString("passw");
+                
+                return SenhaUtil.verificarSenha(
+                userModel.getPassword(),
+                        hashBanco
+                );
+            }
                    
         } catch (Exception e) {
             e.printStackTrace();
             return false;
         } 
+        return false;
     }
 }
